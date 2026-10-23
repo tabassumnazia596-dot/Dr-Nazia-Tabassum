@@ -151,19 +151,25 @@ app.post('/api/appointments', (req: Request, res: Response) => {
     if (isNaN(parsedAge) || parsedAge < 1 || parsedAge > 120) {
       return res.status(400).json({ error: 'Please enter a valid age between 1 and 120' });
     }
-    if (!date || !timeSlot) {
-      return res.status(400).json({ error: 'Appointment date and time slot are required' });
-    }
+    const appointmentDate = (date && typeof date === 'string' && date.trim()) 
+      ? date.trim() 
+      : new Date().toISOString().split('T')[0];
+    const appointmentSlot = (timeSlot && typeof timeSlot === 'string' && timeSlot.trim()) 
+      ? timeSlot.trim() 
+      : 'Flexible / WhatsApp';
+
     if (!healthConcern || typeof healthConcern !== 'string' || healthConcern.trim().length < 5) {
       return res.status(400).json({ error: 'Brief description of your health concern is required' });
     }
 
-    // Double booking prevention check
-    const isAvail = db.isSlotAvailable(date, timeSlot);
-    if (!isAvail) {
-      return res.status(409).json({
-        error: 'This time slot is no longer available. Please select another slot between 4:00 PM and 9:00 PM.',
-      });
+    // Double booking prevention check (only for specific time slots)
+    if (appointmentSlot !== 'Flexible / WhatsApp') {
+      const isAvail = db.isSlotAvailable(appointmentDate, appointmentSlot);
+      if (!isAvail) {
+        return res.status(409).json({
+          error: 'This time slot is no longer available. Please select another slot between 4:00 PM and 9:00 PM.',
+        });
+      }
     }
 
     // Generate unique reference: APT-2026-XXXXX
@@ -176,8 +182,8 @@ app.post('/api/appointments', (req: Request, res: Response) => {
       patientName: patientName.trim(),
       whatsappNumber: whatsappNumber.trim(),
       age: parsedAge,
-      date,
-      timeSlot,
+      date: appointmentDate,
+      timeSlot: appointmentSlot,
       healthConcern: healthConcern.trim(),
       notes: notes ? String(notes).trim() : '',
       status: 'Confirmed',

@@ -231,7 +231,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
               {t.processStep1Desc}
             </p>
             <div className="text-xs text-emerald-800 font-medium flex items-center gap-1">
-              <span>Automatic double-booking protection</span>
+              <span>Quick and simple registration</span>
             </div>
           </div>
 
@@ -247,7 +247,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
               {t.processStep2Desc}
             </p>
             <div className="text-xs text-amber-800 font-medium flex items-center gap-1">
-              <span>Instant slot reservation</span>
+              <span>Direct booking confirmation</span>
             </div>
           </div>
 

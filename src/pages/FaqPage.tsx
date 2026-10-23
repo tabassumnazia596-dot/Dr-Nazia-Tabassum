@@ -15,11 +15,11 @@ export const FaqPage: React.FC<FaqPageProps> = ({ setCurrentTab, language }) => 
   const faqs = [
     {
       q: 'How does an online homeopathic consultation with Dr. Nazia Tabassum work?',
-      a: 'Online consultation begins by booking your preferred time slot between 4:00 PM and 9:00 PM on our website. Your appointment is confirmed instantly with a unique reference number. Dr. Nazia Tabassum connects with you directly via WhatsApp audio or video call for an in-depth homeopathic case analysis.',
+      a: 'Online consultation begins by submitting your consultation request on our website. Your appointment is confirmed instantly with a unique reference number. Dr. Nazia Tabassum connects with you directly via WhatsApp audio or video call for an in-depth homeopathic case analysis.',
     },
     {
       q: 'How do I book an appointment?',
-      a: 'Simply go to the Book Appointment page, select your desired date and 30-minute time slot between 4:00 PM and 9:00 PM (PKT), fill in your basic health concerns and WhatsApp number, and submit to receive instant confirmation.',
+      a: 'Simply go to the Book Appointment page, fill in your name, contact details, and basic health concerns, and submit to receive instant confirmation with your booking reference.',
     },
     {
       q: 'What are the clinic’s consultation hours?',

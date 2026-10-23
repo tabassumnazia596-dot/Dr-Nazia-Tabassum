@@ -26,13 +26,13 @@ export const ConsultationPage: React.FC<ConsultationPageProps> = ({ setCurrentTa
   const steps = [
     {
       num: '01',
-      title: 'Online Slot Reservation',
-      desc: 'Select your preferred date and convenient 30-minute time slot between 4:00 PM and 9:00 PM PKT. Input your health symptoms and contact details to receive a unique reference.',
+      title: 'Online Booking Request',
+      desc: 'Input your contact information and health symptoms description to request an online consultation and receive your unique reference.',
     },
     {
       num: '02',
       title: 'Instant Booking Confirmation',
-      desc: 'Your consultation slot is confirmed immediately upon booking with a unique reference number and reserved time slot.',
+      desc: 'Your consultation is confirmed immediately upon submitting your details with a unique booking reference number.',
     },
     {
       num: '03',

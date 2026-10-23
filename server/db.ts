@@ -211,6 +211,7 @@ class Database {
   }
 
   public isSlotAvailable(date: string, timeSlot: string, excludeId?: string): boolean {
+    if (!timeSlot || timeSlot === 'Flexible / WhatsApp') return true;
     const existing = this.data.appointments.find(a => 
       a.date === date && 
       a.timeSlot === timeSlot && 

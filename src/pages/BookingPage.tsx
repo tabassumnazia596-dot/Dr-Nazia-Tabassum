@@ -1,24 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Calendar as CalendarIcon,
-  Clock,
   User,
   Phone,
   FileText,
   AlertCircle,
   CheckCircle2,
-  Lock,
   ArrowRight,
   Search,
   Printer,
-  Sparkles,
   MessageCircle,
   Copy,
   Check,
   RotateCcw,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
-import { BotanicalBranch, BotanicalLeafBadge, GoldStripeDivider } from '../components/BotanicalAccents';
-import { Appointment, Language, SlotAvailability } from '../types/clinic';
+import { BotanicalBranch, GoldStripeDivider } from '../components/BotanicalAccents';
+import { Appointment, Language } from '../types/clinic';
 import { translations } from '../utils/translations';
 
 interface BookingPageProps {
@@ -31,14 +29,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
   // Active view: 'new_booking' | 'track_booking'
   const [activeTab, setActiveTab] = useState<'new_booking' | 'track_booking'>('new_booking');
 
-  // Form State
-  const todayStr = new Date().toISOString().split('T')[0];
-  const [selectedDate, setSelectedDate] = useState<string>(todayStr);
-  const [availableSlots, setAvailableSlots] = useState<SlotAvailability[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState<boolean>(false);
-  const [slotsError, setSlotsError] = useState<string>('');
-  const [selectedSlot, setSelectedSlot] = useState<string>('');
-
+  // Form State (Schedule/slot selection removed)
   const [patientName, setPatientName] = useState<string>('');
   const [whatsappNumber, setWhatsappNumber] = useState<string>('');
   const [age, setAge] = useState<string>('');
@@ -55,39 +46,6 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
   const [trackedAppointment, setTrackedAppointment] = useState<Appointment | null>(null);
   const [trackLoading, setTrackLoading] = useState<boolean>(false);
   const [trackError, setTrackError] = useState<string>('');
-
-  // Fetch slots whenever selectedDate changes
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchSlots() {
-      if (!selectedDate) return;
-      setSlotsLoading(true);
-      setSlotsError('');
-      setSelectedSlot('');
-
-      try {
-        const res = await fetch(`/api/available-slots?date=${selectedDate}`);
-        const data = await res.json();
-        if (isMounted) {
-          if (!data.available) {
-            setSlotsError(data.reason || 'No consultation slots available on this date.');
-            setAvailableSlots([]);
-          } else {
-            setAvailableSlots(data.slots || []);
-          }
-        }
-      } catch (err) {
-        if (isMounted) {
-          setSlotsError('Could not connect to availability schedule. Please check connection.');
-        }
-      } finally {
-        if (isMounted) setSlotsLoading(false);
-      }
-    }
-
-    fetchSlots();
-    return () => { isMounted = false; };
-  }, [selectedDate]);
 
   // Handle Form Submission
   const handleBookingSubmit = async (e: React.FormEvent) => {
@@ -107,10 +65,6 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
       setBookingError('Please enter a valid age between 1 and 120.');
       return;
     }
-    if (!selectedSlot) {
-      setBookingError('Please select an available consultation time slot between 4:00 PM and 9:00 PM.');
-      return;
-    }
     if (!healthConcern.trim() || healthConcern.trim().length < 5) {
       setBookingError('Please briefly describe your primary health concerns (minimum 5 characters).');
       return;
@@ -123,13 +77,11 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          patientName,
-          whatsappNumber,
+          patientName: patientName.trim(),
+          whatsappNumber: whatsappNumber.trim(),
           age: parseInt(age, 10),
-          date: selectedDate,
-          timeSlot: selectedSlot,
-          healthConcern,
-          notes,
+          healthConcern: healthConcern.trim(),
+          notes: notes.trim(),
         }),
       });
 
@@ -138,10 +90,10 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
       if (res.ok && data.success) {
         setBookedAppointment(data.appointment);
       } else {
-        setBookingError(data.error || 'Failed to submit booking. Slot may have just been reserved.');
+        setBookingError(data.error || 'Failed to submit booking. Please try again.');
       }
     } catch (err: any) {
-      setBookingError('Server error while saving appointment. Please try again.');
+      setBookingError('Server error while saving appointment. Please check your connection and try again.');
     } finally {
       setFormSubmitting(false);
     }
@@ -155,7 +107,6 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
     setAge('');
     setHealthConcern('');
     setNotes('');
-    setSelectedSlot('');
     setBookingError('');
   };
 
@@ -199,15 +150,15 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-800">
           <BotanicalBranch className="w-4 h-4 text-emerald-700" />
-          <span>Online Scheduling · National & International Patients</span>
+          <span>Online Consultation · National & International Patients</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-slate-900">
           {language === 'ur' ? 'آن لائن ہومیوپیتھک کنسلٹیشن بک کریں' : 'Book Online Homeopathic Consultation'}
         </h1>
         <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
           {language === 'ur'
-            ? 'پاکستان اور بیرونِ ملک مقیم تمام مریضوں کے لیے آن لائن مشاورت۔ اوقات شام 4:00 بجے سے رات 9:00 بجے (پاکستانی وقت)۔'
-            : 'Consultations available for patients across Pakistan and overseas worldwide. Sessions are held between 4:00 PM and 9:00 PM (PKT).'}
+            ? 'پاکستان اور بیرونِ ملک مقیم تمام مریضوں کے لیے آن لائن مشاورت۔ اپنی بنیادی معلومات درج کر کے باآسانی بکنگ کریں۔'
+            : 'Personalized online consultations with Dr. Nazia Tabassum for patients across Pakistan and overseas worldwide via WhatsApp.'}
         </p>
         <GoldStripeDivider />
 
@@ -233,7 +184,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            {language === 'ur' ? 'بکنگ ٹریک کریں' : 'Track Existing Booking'}
+            {language === 'ur' ? 'بکنگ چیک کریں' : 'Track Existing Booking'}
           </button>
         </div>
       </div>
@@ -253,12 +204,12 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                   {language === 'ur' ? 'اپائنٹمنٹ تصدیق شدہ' : 'Appointment Confirmed'}
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
-                  {language === 'ur' ? 'آپ کی اپائنٹمنٹ کامیابی سے بک ہو گئی ہے' : 'Your Consultation is Successfully Scheduled!'}
+                  {language === 'ur' ? 'آپ کی اپائنٹمنٹ کامیابی سے بک ہو گئی ہے' : 'Your Consultation is Successfully Booked!'}
                 </h2>
                 <p className="text-sm text-slate-600 max-w-lg mx-auto">
                   {language === 'ur'
-                    ? 'ڈاکٹر نازیہ تبسم آپ کے منتخب کردہ وقت پر آپ سے واٹس ایپ پر رابطہ فرمائیں گی۔ براہ کرم اپنا بکنگ ریفرنس محفوظ رکھیں۔'
-                    : 'Dr. Nazia Tabassum will connect with you directly via WhatsApp video/audio call at your scheduled time slot.'}
+                    ? 'ڈاکٹر نازیہ تبسم آپ کے واٹس ایپ نمبر پر رابطہ فرمائیں گی۔ براہ کرم اپنا بکنگ ریفرنس محفوظ رکھیں۔'
+                    : 'Dr. Nazia Tabassum will connect with you directly via WhatsApp video/audio call. Please keep your booking reference saved.'}
                 </p>
               </div>
 
@@ -292,14 +243,14 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                     <span className="font-bold text-slate-900 text-sm">{bookedAppointment.age} Years</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block font-medium">Consultation Date & Time</span>
-                    <span className="font-bold text-emerald-900 text-sm">
-                      {bookedAppointment.date} · {bookedAppointment.timeSlot} (PKT)
-                    </span>
-                  </div>
-                  <div>
                     <span className="text-slate-400 block font-medium">WhatsApp / Mobile Number</span>
                     <span className="font-bold text-slate-900 text-sm">{bookedAppointment.whatsappNumber}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Consultation Status</span>
+                    <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-900">
+                      {bookedAppointment.status}
+                    </span>
                   </div>
                   <div className="sm:col-span-2">
                     <span className="text-slate-400 block font-medium">Consultation Platform</span>
@@ -320,7 +271,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
               <div className="space-y-3 pt-2">
                 <a
                   href={`https://wa.me/923112932192?text=${encodeURIComponent(
-                    `Assalam-o-Alaikum Dr. Nazia Tabassum. My appointment has been booked. Reference: ${bookedAppointment.reference}. Patient: ${bookedAppointment.patientName} (${bookedAppointment.date} at ${bookedAppointment.timeSlot}).`
+                    `Assalam-o-Alaikum Dr. Nazia Tabassum. I have booked an online consultation. Reference: ${bookedAppointment.reference}. Patient: ${bookedAppointment.patientName} (Age: ${bookedAppointment.age}).`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -346,7 +297,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                     className="flex-1 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    <span>Book Another Appointment</span>
+                    <span>Book Another Consultation</span>
                   </button>
                 </div>
               </div>
@@ -354,16 +305,16 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
             </div>
           ) : (
             /* BOOKING FORM */
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden max-w-3xl mx-auto">
               
-              {/* Hours Notice Bar */}
+              {/* Notice Bar */}
               <div className="bg-emerald-900 text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-amber-300 shrink-0" />
-                  <span>Available Consultation Hours: <strong>4:00 PM – 9:00 PM (PKT)</strong> · Monday to Saturday</span>
+                  <span>Consultation Timings: <strong>4:00 PM – 9:00 PM (PKT)</strong> · Monday to Saturday</span>
                 </div>
                 <div className="text-amber-300 font-medium">
-                  Karachi · National & International
+                  Karachi · National & Worldwide Patients
                 </div>
               </div>
 
@@ -376,97 +327,11 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                   </div>
                 )}
 
-                {/* 1. Date & Time Selection */}
+                {/* 1. Patient Details */}
                 <div className="space-y-4">
-                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2 flex items-center justify-between">
-                    <span>1. Select Date & Time Slot</span>
-                    <span className="text-xs font-normal text-slate-500">4:00 PM – 9:00 PM</span>
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-                    
-                    {/* Date Picker */}
-                    <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1.5">
-                        Consultation Date *
-                      </label>
-                      <input
-                        type="date"
-                        min={todayStr}
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 bg-white"
-                        required
-                      />
-                      <span className="text-[11px] text-slate-400 block mt-1">
-                        Clinic open Monday through Saturday
-                      </span>
-                    </div>
-
-                    {/* Available Slot Picker */}
-                    <div className="md:col-span-2">
-                      <label className="block text-xs font-medium text-slate-700 mb-1.5">
-                        Select Available 30-Minute Time Slot *
-                      </label>
-
-                      {slotsLoading && (
-                        <div className="py-6 text-center text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                          Loading available slots for {selectedDate}...
-                        </div>
-                      )}
-
-                      {!slotsLoading && slotsError && (
-                        <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl">
-                          {slotsError}
-                        </div>
-                      )}
-
-                      {!slotsLoading && !slotsError && availableSlots.length === 0 && (
-                        <div className="p-4 bg-slate-50 border border-slate-200 text-slate-600 text-xs rounded-xl text-center">
-                          No available slots for the selected date. Please pick another date.
-                        </div>
-                      )}
-
-                      {!slotsLoading && availableSlots.length > 0 && (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                          {availableSlots.map((slot) => {
-                            const isSelected = selectedSlot === slot.timeSlot;
-                            return (
-                              <button
-                                key={slot.timeSlot}
-                                type="button"
-                                disabled={!slot.isAvailable}
-                                onClick={() => setSelectedSlot(slot.timeSlot)}
-                                className={`py-2 px-3 rounded-xl text-xs font-medium transition-all text-center cursor-pointer ${
-                                  !slot.isAvailable
-                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed line-through'
-                                    : isSelected
-                                    ? 'bg-emerald-800 text-white shadow-xs font-semibold'
-                                    : 'bg-white border border-slate-200 text-slate-700 hover:border-emerald-700 hover:bg-emerald-50/50'
-                                }`}
-                              >
-                                {slot.timeSlot}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {selectedSlot && (
-                        <div className="mt-2 text-xs text-emerald-800 font-semibold flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Selected Slot: {selectedDate} at {selectedSlot} (PKT)</span>
-                        </div>
-                      )}
-                    </div>
-
-                  </div>
-                </div>
-
-                {/* 2. Patient Details */}
-                <div className="space-y-4">
-                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2">
-                    2. Patient Information
+                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                    <User className="w-4 h-4 text-emerald-700" />
+                    <span>{language === 'ur' ? '۱. مریض کی بنیادی معلومات' : '1. Patient Information'}</span>
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -517,16 +382,17 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                         required
                       />
                       <span className="text-[11px] text-slate-500 block mt-1">
-                        National patients enter regular mobile/WhatsApp (e.g. 03112932192). International patients please include country code with '+' (e.g. +97150..., +447..., +1...). Dr. Nazia will connect via this number.
+                        National patients enter regular mobile/WhatsApp number (e.g. 03112932192). International patients please include country code with '+' (e.g. +97150..., +447..., +1...). Dr. Nazia will connect via this number.
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* 3. Medical Concerns & Notes */}
+                {/* 2. Medical Concerns & Notes */}
                 <div className="space-y-4">
-                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2">
-                    3. Health Concern Description
+                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-emerald-700" />
+                    <span>{language === 'ur' ? '۲. صحت کا مسئلہ اور علامات' : '2. Health Concern Description'}</span>
                   </h3>
 
                   <div>
@@ -560,15 +426,15 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                 {/* Submit CTA */}
                 <button
                   type="submit"
-                  disabled={formSubmitting || !selectedSlot}
+                  disabled={formSubmitting || !patientName.trim() || !whatsappNumber.trim() || !age || !healthConcern.trim()}
                   className={`w-full py-4 px-6 text-sm font-semibold text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    formSubmitting || !selectedSlot
+                    formSubmitting || !patientName.trim() || !whatsappNumber.trim() || !age || !healthConcern.trim()
                       ? 'bg-slate-300 cursor-not-allowed text-slate-500'
                       : 'bg-emerald-800 hover:bg-emerald-900 active:scale-98'
                   }`}
                 >
                   {formSubmitting ? (
-                    <span>Confirming Appointment Slot...</span>
+                    <span>Submitting Consultation Request...</span>
                   ) : (
                     <>
                       <CheckCircle2 className="w-5 h-5 text-emerald-300" />
@@ -587,13 +453,13 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
 
       {/* TAB 2: TRACK EXISTING BOOKING */}
       {activeTab === 'track_booking' && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-10 space-y-8">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-10 space-y-8 max-w-3xl mx-auto">
           <div className="max-w-xl mx-auto space-y-4 text-center">
             <h3 className="text-xl font-serif font-bold text-slate-900">
               {language === 'ur' ? 'اپنی اپائنٹمنٹ چیک کریں' : 'Look Up Your Appointment'}
             </h3>
             <p className="text-xs text-slate-600">
-              Enter the unique appointment reference you received when booking (e.g., <code>APT-2026-1042</code>) to check your slot status, view doctor notes, or print your booking pass.
+              Enter the unique appointment reference you received when booking (e.g., <code>APT-2026-1042</code>) to check your status, view doctor notes, or print your booking pass.
             </p>
 
             <form onSubmit={handleTrackSubmit} className="flex gap-2 pt-2">
@@ -646,9 +512,15 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                   <span className="font-semibold text-slate-900 text-sm">{trackedAppointment.whatsappNumber}</span>
                 </div>
                 <div className="col-span-2">
-                  <span className="text-slate-400 block">Scheduled Consultation Date & Slot</span>
-                  <span className="font-bold text-emerald-900 text-sm">{trackedAppointment.date} at {trackedAppointment.timeSlot} (PKT)</span>
+                  <span className="text-slate-400 block">Consultation Platform</span>
+                  <span className="font-semibold text-emerald-900 text-sm">WhatsApp Video / Audio Call with Dr. Nazia Tabassum</span>
                 </div>
+                {trackedAppointment.healthConcern && (
+                  <div className="col-span-2 bg-white p-3 rounded-xl border border-slate-200">
+                    <span className="text-slate-400 block font-medium mb-0.5">Recorded Concern:</span>
+                    <p className="text-slate-700">{trackedAppointment.healthConcern}</p>
+                  </div>
+                )}
               </div>
 
               {trackedAppointment.doctorNotes && (
@@ -670,7 +542,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
 
                 <a
                   href={`https://wa.me/923112932192?text=${encodeURIComponent(
-                    `Assalam-o-Alaikum Dr. Nazia Tabassum. My appointment reference is ${trackedAppointment.reference}. Please guide me regarding my upcoming consultation.`
+                    `Assalam-o-Alaikum Dr. Nazia Tabassum. My appointment reference is ${trackedAppointment.reference}. Patient: ${trackedAppointment.patientName}.`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"

@@ -119,12 +119,12 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
 
             <h3 className="font-semibold text-slate-900 text-base">2. Appointment Booking & Confirmation</h3>
             <p>
-              Appointments are scheduled online for available 30-minute consultation slots. Once submitted, your appointment is confirmed with a dedicated reference number and logged directly into our clinical calendar.
+              Appointments are booked online directly. Once submitted, your consultation is confirmed with a dedicated reference number and logged directly into our clinical records.
             </p>
 
-            <h3 className="font-semibold text-slate-900 text-base">3. Punctuality and Availability</h3>
+            <h3 className="font-semibold text-slate-900 text-base">3. Availability</h3>
             <p>
-              Patients are requested to be online and available on WhatsApp at their reserved time slot between 4:00 PM and 9:00 PM PKT. If you need to adjust your time, please notify us in advance via WhatsApp.
+              Patients are requested to be available on WhatsApp between 4:00 PM and 9:00 PM PKT for consultation coordination.
             </p>
           </div>
         )}

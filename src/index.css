@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-urdu: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #FAFCFA;
+    color: #1E293B;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-serif);
+  }
+
+  .lang-ur {
+    font-family: var(--font-urdu);
+    line-height: 2.2;
+    direction: rtl;
+  }
+}
+
+/* Custom sage and subtle gold utility colors */
+.bg-sage-50 { background-color: #F4F7F5; }
+.bg-sage-100 { background-color: #E8EFEA; }
+.bg-sage-600 { background-color: #386641; }
+.bg-sage-700 { background-color: #2F5636; }
+.bg-sage-800 { background-color: #223E27; }
+.text-sage-700 { color: #2F5636; }
+.text-sage-800 { color: #223E27; }
+.text-sage-900 { color: #172B1B; }
+.border-sage-200 { border-color: #D3E0D6; }
+.border-sage-300 { border-color: #B5CCA0; }
+
+.gold-accent {
+  color: #B38F48;
+}
+.border-gold-subtle {
+  border-color: #E5D5B5;
+}
+.bg-gold-subtle {
+  background-color: #FCF9F2;
+}

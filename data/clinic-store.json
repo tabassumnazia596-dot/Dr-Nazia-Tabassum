@@ -1,0 +1,123 @@
+{
+  "settings": {
+    "doctorName": "Dr. Nazia Tabassum",
+    "qualifications": "D.H.M.S, R.H.M.P",
+    "location": "Karachi, Pakistan",
+    "consultationType": "Online only",
+    "consultationFee": 500,
+    "whatsappNumber": "03112932192",
+    "hoursStart": "16:00",
+    "hoursEnd": "21:00",
+    "slotDurationMinutes": 30,
+    "enabledDays": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "disabledDates": [],
+    "languages": [
+      "English",
+      "Urdu"
+    ],
+    "abhiPay": {
+      "environment": "sandbox",
+      "accountReference": "PK13ABHI0000923112932192",
+      "merchantApproved": false,
+      "merchantId": "",
+      "apiKey": "",
+      "secretKey": "",
+      "webhookSecret": ""
+    },
+    "adminPasswordHash": "doctor123"
+  },
+  "appointments": [
+    {
+      "id": "apt-seed-1",
+      "reference": "APT-2026-1042",
+      "patientName": "Ayesha Khan",
+      "whatsappNumber": "03001234567",
+      "age": 32,
+      "date": "2026-10-24",
+      "timeSlot": "05:00 PM",
+      "healthConcern": "Chronic migraine and allergy flare-ups over the past 4 months.",
+      "notes": "Prefers audio/video call on WhatsApp.",
+      "status": "Confirmed",
+      "paymentRef": "ABHI-PAY-8829104",
+      "paidAmount": 500,
+      "paidAt": "2026-10-23T04:07:31.409Z",
+      "paymentMethod": "ABHI Pay (Sandbox)",
+      "doctorNotes": "Initial case-taking scheduled. Requested patient to have medical history notes ready.",
+      "createdAt": "2026-10-23T03:07:31.409Z",
+      "updatedAt": "2026-10-23T04:07:31.409Z"
+    },
+    {
+      "id": "apt-seed-2",
+      "reference": "APT-2026-1089",
+      "patientName": "Mohammad Usman",
+      "whatsappNumber": "03219876543",
+      "age": 45,
+      "date": "2026-10-25",
+      "timeSlot": "06:30 PM",
+      "healthConcern": "Acid reflux and recurring digestive discomfort after meals.",
+      "status": "Awaiting Payment",
+      "createdAt": "2026-10-23T04:37:31.409Z",
+      "updatedAt": "2026-10-23T04:37:31.409Z"
+    },
+    {
+      "reference": "APT-2026-71393",
+      "patientName": "Zainab Ali",
+      "whatsappNumber": "03112932192",
+      "age": 29,
+      "date": "2026-10-23",
+      "timeSlot": "04:00 PM",
+      "healthConcern": "Chronic migraine issues",
+      "notes": "",
+      "status": "Confirmed",
+      "id": "apt-ttmoytu",
+      "createdAt": "2026-10-23T05:07:52.315Z",
+      "updatedAt": "2026-10-23T05:08:14.544Z",
+      "paymentRef": "ABHI-086518-9109",
+      "paidAmount": 500,
+      "paidAt": "2026-10-23T05:08:14.544Z",
+      "paymentMethod": "ABHI Pay - Digital Wallet"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-seed-1",
+      "transactionRef": "ABHI-PAY-8829104",
+      "appointmentRef": "APT-2026-1042",
+      "patientName": "Ayesha Khan",
+      "amount": 500,
+      "currency": "PKR",
+      "status": "SUCCESS",
+      "provider": "ABHI Pay",
+      "environment": "sandbox",
+      "createdAt": "2026-10-23T04:07:31.409Z",
+      "verifiedAt": "2026-10-23T04:07:31.409Z"
+    },
+    {
+      "transactionRef": "ABHI-086518-9109",
+      "appointmentRef": "APT-2026-71393",
+      "patientName": "Zainab Ali",
+      "amount": 500,
+      "currency": "PKR",
+      "status": "SUCCESS",
+      "provider": "ABHI Pay",
+      "environment": "sandbox",
+      "id": "tx-ng0rg16",
+      "createdAt": "2026-10-23T05:08:06.518Z",
+      "verifiedAt": "2026-10-23T05:08:14.544Z",
+      "gatewayResponse": {
+        "provider": "ABHI Pay",
+        "accountReferenceMasked": "PK13ABHI****92",
+        "verifiedAmount": 500,
+        "currency": "PKR",
+        "channel": "ABHI Pay - Digital Wallet"
+      }
+    }
+  ]
+}

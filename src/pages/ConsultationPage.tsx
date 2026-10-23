@@ -31,8 +31,8 @@ export const ConsultationPage: React.FC<ConsultationPageProps> = ({ setCurrentTa
     },
     {
       num: '02',
-      title: 'PKR 500 Fee Payment via ABHI Pay',
-      desc: 'Settle the consultation fee through the ABHI Pay payment gateway via mobile wallet (EasyPaisa/JazzCash), debit/credit card, or bank transfer for instantaneous backend verification.',
+      title: 'Instant Booking Confirmation',
+      desc: 'Your consultation slot is confirmed immediately upon booking with a unique reference number and reserved time slot.',
     },
     {
       num: '03',
@@ -74,10 +74,10 @@ export const ConsultationPage: React.FC<ConsultationPageProps> = ({ setCurrentTa
           </div>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3">
-          <CreditCard className="w-8 h-8 text-emerald-700 shrink-0" />
+          <FileCheck className="w-8 h-8 text-emerald-700 shrink-0" />
           <div>
-            <span className="text-xs text-slate-500 block">Consultation Fee</span>
-            <span className="text-sm font-semibold text-slate-900">PKR 500 (ABHI Pay)</span>
+            <span className="text-xs text-slate-500 block">Session Format</span>
+            <span className="text-sm font-semibold text-slate-900">One-on-One Individualized</span>
           </div>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3">
@@ -149,7 +149,7 @@ export const ConsultationPage: React.FC<ConsultationPageProps> = ({ setCurrentTa
               National Patients (Pakistan)
             </strong>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Serving patients across Karachi, Lahore, Islamabad, Rawalpindi, Peshawar, Quetta, and all cities. Direct consultation in Urdu or English. Prescriptions include standard remedy names easily obtainable at any local homeopathic pharmacy. Settle fee via ABHI Pay (EasyPaisa, JazzCash, or bank cards).
+              Serving patients across Karachi, Lahore, Islamabad, Rawalpindi, Peshawar, Quetta, and all cities. Direct consultation in Urdu or English. Prescriptions include standard remedy names easily obtainable at any local homeopathic pharmacy.
             </p>
           </div>
           <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-100 space-y-1.5">
@@ -157,7 +157,7 @@ export const ConsultationPage: React.FC<ConsultationPageProps> = ({ setCurrentTa
               International & Overseas Patients
             </strong>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Welcoming overseas Pakistanis and international clients worldwide (UAE, Saudi Arabia, Gulf, UK, USA, Canada, Europe, Australia). Sessions conducted on WhatsApp audio or video call aligned with PKT. Online payments processed effortlessly via international debit/credit card through ABHI Pay.
+              Welcoming overseas Pakistanis and international clients worldwide (UAE, Saudi Arabia, Gulf, UK, USA, Canada, Europe, Australia). Sessions conducted on WhatsApp audio or video call aligned with PKT.
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export const ConsultationPage: React.FC<ConsultationPageProps> = ({ setCurrentTa
           onClick={() => setCurrentTab('book')}
           className="px-8 py-4 bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-sm rounded-xl shadow-md transition-all inline-flex items-center gap-2 cursor-pointer"
         >
-          <span>Schedule Your Consultation (PKR 500)</span>
+          <span>Schedule Your Consultation Online</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

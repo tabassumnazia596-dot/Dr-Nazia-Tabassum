@@ -77,14 +77,6 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentTab, language }) => {
               </li>
               <li>
                 <button
-                  onClick={() => { setCurrentTab('payment'); window.scrollTo(0, 0); }}
-                  className="hover:text-emerald-400 transition-colors cursor-pointer"
-                >
-                  {t.navPayment}
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => { setCurrentTab('faqs'); window.scrollTo(0, 0); }}
                   className="hover:text-emerald-400 transition-colors cursor-pointer"
                 >
@@ -94,31 +86,31 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentTab, language }) => {
             </ul>
           </div>
 
-          {/* Column 3: Clinic Timings & Consultation Fee */}
+          {/* Column 3: Clinic Timings & Consultation Mode */}
           <div className="space-y-3">
             <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-100">
-              {language === 'ur' ? 'اوقات اور فیس' : 'Hours & Fee'}
+              {language === 'ur' ? 'اوقات اور طریقہ کار' : 'Hours & Consultations'}
             </h4>
             <div className="space-y-2.5 text-sm text-slate-400">
               <div className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block text-slate-200 font-medium">4:00 PM – 9:00 PM PKT</span>
-                  <span className="text-xs text-slate-400">By confirmed appointment</span>
+                  <span className="text-xs text-slate-400">Monday to Saturday</span>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Stethoscope className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block text-slate-200 font-medium">PKR 500 Consultation Fee</span>
-                  <span className="text-xs text-slate-400">Verified via ABHI Pay</span>
+                  <span className="block text-slate-200 font-medium">Online Homeopathic Care</span>
+                  <span className="text-xs text-slate-400">WhatsApp Audio / Video Call</span>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block text-slate-200 font-medium">Karachi, Pakistan</span>
-                  <span className="text-xs text-slate-400">Consultation mode: Online</span>
+                  <span className="text-xs text-slate-400">Serving National & Worldwide Patients</span>
                 </div>
               </div>
             </div>
@@ -183,10 +175,10 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentTab, language }) => {
             </button>
             <span aria-hidden="true" className="text-slate-700">·</span>
             <button
-              onClick={() => { setCurrentTab('refund'); window.scrollTo(0, 0); }}
+              onClick={() => { setCurrentTab('global'); window.scrollTo(0, 0); }}
               className="hover:text-slate-300 transition-colors cursor-pointer"
             >
-              Cancellation & Refund Policy
+              Practice Guidelines
             </button>
           </div>
         </div>

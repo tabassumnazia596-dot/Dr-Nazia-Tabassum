@@ -6,7 +6,6 @@ import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
 import { ConsultationPage } from './pages/ConsultationPage';
 import { BookingPage } from './pages/BookingPage';
-import { PaymentInfoPage } from './pages/PaymentInfoPage';
 import { FaqPage } from './pages/FaqPage';
 import { ContactPage } from './pages/ContactPage';
 import { PoliciesPage } from './pages/PoliciesPage';
@@ -72,7 +71,7 @@ export default function App() {
         )}
 
         {currentTab === 'payment' && (
-          <PaymentInfoPage setCurrentTab={handleSetTab} language={language} />
+          <BookingPage language={language} />
         )}
 
         {currentTab === 'faqs' && (
@@ -91,8 +90,8 @@ export default function App() {
           <PoliciesPage initialSection="terms" language={language} />
         )}
 
-        {currentTab === 'refund' && (
-          <PoliciesPage initialSection="refund" language={language} />
+        {currentTab === 'policies' && (
+          <PoliciesPage initialSection="privacy" language={language} />
         )}
 
         {currentTab === 'global' && (

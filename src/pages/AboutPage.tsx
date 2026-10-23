@@ -80,10 +80,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({ setCurrentTab, language })
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-1">
               <strong className="text-xs uppercase tracking-wider text-emerald-800 block">
-                Standard Consultation Fee
+                Practice Format
               </strong>
-              <span className="text-lg font-bold text-slate-900">PKR 500</span>
-              <span className="text-xs text-slate-500 block">Per scheduled appointment</span>
+              <span className="text-lg font-bold text-slate-900">100% Online</span>
+              <span className="text-xs text-slate-500 block">WhatsApp Audio & Video</span>
             </div>
 
             <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-1">

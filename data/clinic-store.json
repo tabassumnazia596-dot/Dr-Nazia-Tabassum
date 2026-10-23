@@ -62,9 +62,13 @@
       "date": "2026-10-25",
       "timeSlot": "06:30 PM",
       "healthConcern": "Acid reflux and recurring digestive discomfort after meals.",
-      "status": "Awaiting Payment",
+      "status": "Confirmed",
       "createdAt": "2026-10-23T04:37:31.409Z",
-      "updatedAt": "2026-10-23T04:37:31.409Z"
+      "updatedAt": "2026-10-23T11:47:03.923Z",
+      "paymentRef": "ABHI-017660-6226",
+      "paidAmount": 500,
+      "paidAt": "2026-10-23T11:47:03.923Z",
+      "paymentMethod": "ABHI Wallet Transfer (IBAN: PK13ABHI0000923112932192) [TID: EP-92817294]"
     },
     {
       "reference": "APT-2026-71393",
@@ -83,6 +87,68 @@
       "paidAmount": 500,
       "paidAt": "2026-10-23T05:08:14.544Z",
       "paymentMethod": "ABHI Pay - Digital Wallet"
+    },
+    {
+      "reference": "APT-2026-47126",
+      "patientName": "ghj",
+      "whatsappNumber": "03156632379",
+      "age": 63,
+      "date": "2026-10-23",
+      "timeSlot": "04:30 PM",
+      "healthConcern": "fever",
+      "notes": "allergy",
+      "status": "Payment Pending",
+      "id": "apt-tc9fpe3",
+      "createdAt": "2026-10-23T11:47:00.642Z",
+      "updatedAt": "2026-10-23T11:47:01.112Z",
+      "paymentRef": "ABHI-021112-2420"
+    },
+    {
+      "reference": "APT-2026-42262",
+      "patientName": "Test Patient",
+      "whatsappNumber": "03112932192",
+      "age": 28,
+      "date": "2026-10-25",
+      "timeSlot": "16:30 - 17:00",
+      "healthConcern": "Consultation inquiry",
+      "notes": "",
+      "status": "Confirmed",
+      "id": "apt-a2nq6jk",
+      "createdAt": "2026-10-23T11:56:33.774Z",
+      "updatedAt": "2026-10-23T11:56:43.868Z",
+      "paymentRef": "ABHI-599235-7024",
+      "paidAmount": 500,
+      "paidAt": "2026-10-23T11:56:43.868Z",
+      "paymentMethod": "ABHI Account Transfer (IBAN: PK13ABHI0000923112932192) [TID: TID-992348]"
+    },
+    {
+      "reference": "APT-2026-46920",
+      "patientName": "nazi",
+      "whatsappNumber": "03156632379",
+      "age": 23,
+      "date": "2026-10-23",
+      "timeSlot": "05:00 PM",
+      "healthConcern": "injury",
+      "notes": "",
+      "status": "Payment Pending",
+      "id": "apt-904q59g",
+      "createdAt": "2026-10-23T11:56:40.531Z",
+      "updatedAt": "2026-10-23T11:56:41.052Z",
+      "paymentRef": "ABHI-601052-7657"
+    },
+    {
+      "reference": "APT-2026-65908",
+      "patientName": "Test Patient",
+      "whatsappNumber": "03112932192",
+      "age": 30,
+      "date": "2026-10-25",
+      "timeSlot": "05:00 PM",
+      "healthConcern": "Chronic allergy consultation test",
+      "notes": "",
+      "status": "Confirmed",
+      "id": "apt-gy0n8ng",
+      "createdAt": "2026-10-23T12:09:48.769Z",
+      "updatedAt": "2026-10-23T12:09:48.769Z"
     }
   ],
   "transactions": [
@@ -118,6 +184,78 @@
         "currency": "PKR",
         "channel": "ABHI Pay - Digital Wallet"
       }
+    },
+    {
+      "transactionRef": "ABHI-017660-6226",
+      "appointmentRef": "APT-2026-1089",
+      "patientName": "Mohammad Usman",
+      "amount": 500,
+      "currency": "PKR",
+      "status": "SUCCESS",
+      "provider": "ABHI Pay",
+      "environment": "sandbox",
+      "id": "tx-35g8j7x",
+      "createdAt": "2026-10-23T11:46:57.661Z",
+      "verifiedAt": "2026-10-23T11:47:03.923Z",
+      "gatewayResponse": {
+        "provider": "ABHI Pay",
+        "destinationIban": "PK13ABHI0000923112932192",
+        "beneficiaryTitle": "Dr. Nazia Tabassum",
+        "verifiedAmount": 500,
+        "currency": "PKR",
+        "channel": "ABHI Wallet Transfer (IBAN: PK13ABHI0000923112932192)",
+        "senderBank": "EasyPaisa",
+        "senderAccount": "03219876543",
+        "transferTrxId": "EP-92817294"
+      }
+    },
+    {
+      "transactionRef": "ABHI-021112-2420",
+      "appointmentRef": "APT-2026-47126",
+      "patientName": "ghj",
+      "amount": 500,
+      "currency": "PKR",
+      "status": "PENDING",
+      "provider": "ABHI Pay",
+      "environment": "sandbox",
+      "id": "tx-6lkg0z3",
+      "createdAt": "2026-10-23T11:47:01.112Z"
+    },
+    {
+      "transactionRef": "ABHI-599235-7024",
+      "appointmentRef": "APT-2026-42262",
+      "patientName": "Test Patient",
+      "amount": 500,
+      "currency": "PKR",
+      "status": "SUCCESS",
+      "provider": "ABHI Pay",
+      "environment": "sandbox",
+      "id": "tx-x959pbe",
+      "createdAt": "2026-10-23T11:56:39.235Z",
+      "verifiedAt": "2026-10-23T11:56:43.868Z",
+      "gatewayResponse": {
+        "provider": "ABHI Pay",
+        "destinationIban": "PK13ABHI0000923112932192",
+        "beneficiaryTitle": "Dr. Nazia Tabassum",
+        "verifiedAmount": 500,
+        "currency": "PKR",
+        "channel": "ABHI Account Transfer (IBAN: PK13ABHI0000923112932192)",
+        "senderBank": "ABHI Account",
+        "senderAccount": "03112932192",
+        "transferTrxId": "TID-992348"
+      }
+    },
+    {
+      "transactionRef": "ABHI-601052-7657",
+      "appointmentRef": "APT-2026-46920",
+      "patientName": "nazi",
+      "amount": 500,
+      "currency": "PKR",
+      "status": "PENDING",
+      "provider": "ABHI Pay",
+      "environment": "sandbox",
+      "id": "tx-hiwbavt",
+      "createdAt": "2026-10-23T11:56:41.052Z"
     }
   ]
 }

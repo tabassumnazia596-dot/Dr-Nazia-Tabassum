@@ -97,25 +97,25 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
                 “Connect with Dr. Nazia Tabassum for an online consultation. Book an appointment, choose an available time and discuss your health concerns from the comfort of your home.”
               </p>
 
-              {/* Prominent Consultation Fee Badge */}
+              {/* Practice Consultation Highlight */}
               <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/90 border border-emerald-200/90 shadow-xs max-w-xl">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <span className="text-xs uppercase tracking-wider font-semibold text-emerald-800 block">
-                      Consultation Package
+                      Consultation Mode
                     </span>
                     <span className="text-xl sm:text-2xl font-serif font-bold text-emerald-950">
-                      Online Consultation Fee: PKR 500
+                      100% Online Consultations
                     </span>
                   </div>
                   <div className="text-xs text-emerald-800/80 sm:text-right font-medium">
-                    <span>Per Appointment</span>
-                    <span className="block text-slate-500">ABHI Pay Verified</span>
+                    <span>Direct WhatsApp Call</span>
+                    <span className="block text-slate-500">4:00 PM – 9:00 PM PKT</span>
                   </div>
                 </div>
               </div>
 
-              {/* Core 3 Action Buttons */}
+              {/* Core Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 {/* Button 1: Book an Appointment */}
                 <button
@@ -126,16 +126,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
                   <span>Book an Appointment</span>
                 </button>
 
-                {/* Button 2: Pay Consultation Fee */}
-                <button
-                  onClick={() => setCurrentTab('payment')}
-                  className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 text-sm font-semibold rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <CreditCard className="w-4 h-4 text-emerald-700" />
-                  <span>Pay Consultation Fee</span>
-                </button>
-
-                {/* Button 3: Chat on WhatsApp */}
+                {/* Button 2: Chat on WhatsApp */}
                 <a
                   href={whatsappUrl}
                   target="_blank"
@@ -199,7 +190,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
                     <ShieldCheck className="w-4 h-4 text-emerald-700" />
                     <span>Official Practice Credentials Verified</span>
                   </div>
-                  <span className="font-mono font-semibold text-emerald-800">PKR 500</span>
+                  <span className="font-semibold text-emerald-800">Karachi, PK</span>
                 </div>
 
               </div>
@@ -256,7 +247,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
               {t.processStep2Desc}
             </p>
             <div className="text-xs text-amber-800 font-medium flex items-center gap-1">
-              <span>Integrated with ABHI Pay gateway</span>
+              <span>Instant slot reservation</span>
             </div>
           </div>
 
@@ -402,44 +393,56 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
         </div>
       </section>
 
-      {/* 5. ABHI PAY PAYMENT INSTRUCTIONS BANNER */}
+      {/* 5. CONSULTATION APPOINTMENT BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-emerald-900 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl">
+        <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-amber-300 bg-emerald-800/60 px-3 py-1 rounded-full">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
-                <span>Preferred Payment Partner · ABHI Pay</span>
+            <div className="lg:col-span-7 space-y-4">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-amber-300 bg-emerald-800/60 px-3 py-1 rounded-full border border-amber-300/30">
+                <Clock className="w-3.5 h-3.5 text-amber-300" />
+                <span>4:00 PM to 9:00 PM (PKT) · Mon – Sat</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white">
-                Official ABHI Pay Online Payment Integration
+                Ready to Schedule Your Consultation?
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Consultations are confirmed automatically once the <strong>PKR 500</strong> fee is verified through ABHI Pay. We support flexible payment channels including mobile wallets, bank transfer, and cards.
+              <p className="text-sm text-slate-200 leading-relaxed">
+                Connect with Dr. Nazia Tabassum for dedicated homeopathic case-taking from anywhere in Pakistan or overseas worldwide. Book your preferred time slot online with instant confirmation.
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-emerald-200 pt-2">
-                <span>✓ Instant Server-Side Verification</span>
-                <span aria-hidden="true">·</span>
-                <span>✓ Automated Reference Matching</span>
-                <span aria-hidden="true">·</span>
-                <span>✓ Zero Manual Receipt Submissions</span>
+              
+              <div className="pt-2 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-300">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>National & Overseas Patients</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>WhatsApp Audio / Video Call</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>Instant Booking Pass</span>
+                </span>
               </div>
             </div>
 
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
-              <button
-                onClick={() => setCurrentTab('payment')}
-                className="w-full py-3 px-5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold text-xs rounded-xl transition-all shadow-md text-center cursor-pointer"
-              >
-                View Payment Instructions & Status
-              </button>
+            <div className="lg:col-span-5 flex flex-col gap-3">
               <button
                 onClick={() => setCurrentTab('book')}
-                className="w-full py-3 px-5 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-xl transition-all border border-white/20 text-center cursor-pointer"
+                className="w-full py-4 px-6 bg-emerald-700 hover:bg-emerald-600 active:scale-98 text-white font-bold text-sm rounded-xl transition-all shadow-md text-center cursor-pointer flex items-center justify-center gap-2"
               >
-                Book Appointment (PKR 500)
+                <Calendar className="w-4 h-4 text-amber-200" />
+                <span>Book Consultation Online</span>
               </button>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3.5 px-6 bg-[#25D366] hover:bg-[#20BD5A] active:scale-98 text-white font-semibold text-xs rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>Chat Directly on WhatsApp (03112932192)</span>
+              </a>
             </div>
 
           </div>
@@ -480,7 +483,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setCurrentTab, language }) =
                 <span>Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Peshawar, Quetta, Multan, Hyderabad, and all surrounding areas.</span>
               </div>
               <div className="text-xs font-medium text-emerald-800">
-                ✓ Pay PKR 500 via ABHI Pay, EasyPaisa, JazzCash, or Bank Transfer
+                ✓ Pay PKR 500 directly to official ABHI Account: PK13ABHI0000923112932192
               </div>
             </div>
 

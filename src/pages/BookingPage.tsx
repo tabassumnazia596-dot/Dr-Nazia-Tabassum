@@ -10,12 +10,14 @@ import {
   Lock,
   ArrowRight,
   Search,
-  CreditCard,
   Printer,
   Sparkles,
+  MessageCircle,
+  Copy,
+  Check,
+  RotateCcw,
 } from 'lucide-react';
 import { BotanicalBranch, BotanicalLeafBadge, GoldStripeDivider } from '../components/BotanicalAccents';
-import { AbhiPayModal } from '../components/AbhiPayModal';
 import { Appointment, Language, SlotAvailability } from '../types/clinic';
 import { translations } from '../utils/translations';
 
@@ -46,10 +48,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
   const [formSubmitting, setFormSubmitting] = useState<boolean>(false);
   const [bookingError, setBookingError] = useState<string>('');
   const [bookedAppointment, setBookedAppointment] = useState<Appointment | null>(null);
-
-  // Modal State for ABHI Pay
-  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
-  const [activeCheckoutApt, setActiveCheckoutApt] = useState<Appointment | null>(null);
+  const [copiedRef, setCopiedRef] = useState<boolean>(false);
 
   // Track Booking State
   const [searchReference, setSearchReference] = useState<string>('');
@@ -138,8 +137,6 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
 
       if (res.ok && data.success) {
         setBookedAppointment(data.appointment);
-        setActiveCheckoutApt(data.appointment);
-        setShowPaymentModal(true); // Open ABHI Pay directly
       } else {
         setBookingError(data.error || 'Failed to submit booking. Slot may have just been reserved.');
       }
@@ -148,6 +145,18 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
     } finally {
       setFormSubmitting(false);
     }
+  };
+
+  // Reset form for a new booking
+  const handleResetBooking = () => {
+    setBookedAppointment(null);
+    setPatientName('');
+    setWhatsappNumber('');
+    setAge('');
+    setHealthConcern('');
+    setNotes('');
+    setSelectedSlot('');
+    setBookingError('');
   };
 
   // Handle Track Lookup
@@ -177,6 +186,12 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
     }
   };
 
+  const copyAppointmentRef = (ref: string) => {
+    navigator.clipboard.writeText(ref);
+    setCopiedRef(true);
+    setTimeout(() => setCopiedRef(false), 2500);
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
@@ -187,10 +202,12 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
           <span>Online Scheduling · National & International Patients</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-slate-900">
-          Book Online Homeopathic Consultation
+          {language === 'ur' ? 'آن لائن ہومیوپیتھک کنسلٹیشن بک کریں' : 'Book Online Homeopathic Consultation'}
         </h1>
         <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-          Consultations available for patients across Pakistan and overseas worldwide. Sessions are held between <strong>4:00 PM and 9:00 PM (PKT)</strong>. Consultation fee is <strong>PKR 500</strong>, automatically verified via ABHI Pay.
+          {language === 'ur'
+            ? 'پاکستان اور بیرونِ ملک مقیم تمام مریضوں کے لیے آن لائن مشاورت۔ اوقات شام 4:00 بجے سے رات 9:00 بجے (پاکستانی وقت)۔'
+            : 'Consultations available for patients across Pakistan and overseas worldwide. Sessions are held between 4:00 PM and 9:00 PM (PKT).'}
         </p>
         <GoldStripeDivider />
 
@@ -205,7 +222,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            New Appointment
+            {language === 'ur' ? 'نئی اپائنٹمنٹ' : 'New Appointment'}
           </button>
           <button
             type="button"
@@ -216,236 +233,356 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Track Existing Booking
+            {language === 'ur' ? 'بکنگ ٹریک کریں' : 'Track Existing Booking'}
           </button>
         </div>
       </div>
 
       {/* TAB 1: NEW BOOKING */}
       {activeTab === 'new_booking' && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          
-          {/* Fee & Hours Notice Bar */}
-          <div className="bg-emerald-900 text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-300 shrink-0" />
-              <span>Available Hours: <strong>4:00 PM – 9:00 PM (PKT)</strong> · Monday to Saturday</span>
-            </div>
-            <div className="font-semibold text-amber-300">
-              Consultation Fee: PKR 500
-            </div>
-          </div>
-
-          <form onSubmit={handleBookingSubmit} className="p-6 sm:p-10 space-y-8">
-            
-            {bookingError && (
-              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-                <span>{bookingError}</span>
+        <>
+          {/* SUCCESS SCREEN: Confirmed Directly */}
+          {bookedAppointment ? (
+            <div className="bg-white rounded-3xl border border-emerald-200 shadow-lg p-6 sm:p-10 space-y-8 animate-in fade-in max-w-3xl mx-auto">
+              
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto shadow-xs">
+                  <CheckCircle2 className="w-10 h-10" />
+                </div>
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-900 border border-emerald-300">
+                  {language === 'ur' ? 'اپائنٹمنٹ تصدیق شدہ' : 'Appointment Confirmed'}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+                  {language === 'ur' ? 'آپ کی اپائنٹمنٹ کامیابی سے بک ہو گئی ہے' : 'Your Consultation is Successfully Scheduled!'}
+                </h2>
+                <p className="text-sm text-slate-600 max-w-lg mx-auto">
+                  {language === 'ur'
+                    ? 'ڈاکٹر نازیہ تبسم آپ کے منتخب کردہ وقت پر آپ سے واٹس ایپ پر رابطہ فرمائیں گی۔ براہ کرم اپنا بکنگ ریفرنس محفوظ رکھیں۔'
+                    : 'Dr. Nazia Tabassum will connect with you directly via WhatsApp video/audio call at your scheduled time slot.'}
+                </p>
               </div>
-            )}
 
-            {/* 1. Date & Time Selection */}
-            <div className="space-y-4">
-              <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2 flex items-center justify-between">
-                <span>1. Select Date & Time Slot</span>
-                <span className="text-xs font-normal text-slate-500">4:00 PM – 9:00 PM</span>
-              </h3>
+              {/* Reference & Details Summary Card */}
+              <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50/30 rounded-2xl p-6 border border-emerald-200 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-emerald-200/80">
+                  <div>
+                    <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold block">
+                      Booking Reference Number
+                    </span>
+                    <span className="text-2xl font-mono font-bold text-emerald-950 select-all">
+                      {bookedAppointment.reference}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => copyAppointmentRef(bookedAppointment.reference)}
+                    className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold bg-white hover:bg-emerald-50 text-emerald-900 border border-slate-300 rounded-xl transition-colors cursor-pointer shadow-2xs self-start sm:self-auto"
+                  >
+                    {copiedRef ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-500" />}
+                    <span>{copiedRef ? 'Copied to Clipboard!' : 'Copy Reference'}</span>
+                  </button>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700 pt-1">
+                  <div>
+                    <span className="text-slate-400 block font-medium">Patient Full Name</span>
+                    <span className="font-bold text-slate-900 text-sm">{bookedAppointment.patientName}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Age</span>
+                    <span className="font-bold text-slate-900 text-sm">{bookedAppointment.age} Years</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Consultation Date & Time</span>
+                    <span className="font-bold text-emerald-900 text-sm">
+                      {bookedAppointment.date} · {bookedAppointment.timeSlot} (PKT)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">WhatsApp / Mobile Number</span>
+                    <span className="font-bold text-slate-900 text-sm">{bookedAppointment.whatsappNumber}</span>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <span className="text-slate-400 block font-medium">Consultation Platform</span>
+                    <span className="font-semibold text-slate-800">
+                      WhatsApp Video / Audio Call with Dr. Nazia Tabassum (03112932192)
+                    </span>
+                  </div>
+                  {bookedAppointment.healthConcern && (
+                    <div className="sm:col-span-2 bg-white/80 p-3 rounded-xl border border-emerald-100">
+                      <span className="text-slate-400 block font-medium mb-0.5">Recorded Health Concern:</span>
+                      <p className="text-slate-700 italic">{bookedAppointment.healthConcern}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 pt-2">
+                <a
+                  href={`https://wa.me/923112932192?text=${encodeURIComponent(
+                    `Assalam-o-Alaikum Dr. Nazia Tabassum. My appointment has been booked. Reference: ${bookedAppointment.reference}. Patient: ${bookedAppointment.patientName} (${bookedAppointment.date} at ${bookedAppointment.timeSlot}).`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 px-6 bg-[#25D366] hover:bg-[#20BD5A] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all text-center"
+                >
+                  <MessageCircle className="w-5 h-5 fill-current" />
+                  <span>Send Confirmation to Dr. Nazia on WhatsApp (03112932192)</span>
+                </a>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="flex-1 py-3 px-4 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Printer className="w-4 h-4 text-slate-600" />
+                    <span>Print Booking Pass</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResetBooking}
+                    className="flex-1 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Book Another Appointment</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          ) : (
+            /* BOOKING FORM */
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+              
+              {/* Hours Notice Bar */}
+              <div className="bg-emerald-900 text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-300 shrink-0" />
+                  <span>Available Consultation Hours: <strong>4:00 PM – 9:00 PM (PKT)</strong> · Monday to Saturday</span>
+                </div>
+                <div className="text-amber-300 font-medium">
+                  Karachi · National & International
+                </div>
+              </div>
+
+              <form onSubmit={handleBookingSubmit} className="p-6 sm:p-10 space-y-8">
                 
-                {/* Date Picker */}
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">
-                    Consultation Date *
-                  </label>
-                  <input
-                    type="date"
-                    min={todayStr}
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
-                    required
-                  />
-                  <span className="text-[11px] text-slate-500 block mt-1">
-                    Select today or any upcoming date
-                  </span>
+                {bookingError && (
+                  <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <span>{bookingError}</span>
+                  </div>
+                )}
+
+                {/* 1. Date & Time Selection */}
+                <div className="space-y-4">
+                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2 flex items-center justify-between">
+                    <span>1. Select Date & Time Slot</span>
+                    <span className="text-xs font-normal text-slate-500">4:00 PM – 9:00 PM</span>
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                    
+                    {/* Date Picker */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                        Consultation Date *
+                      </label>
+                      <input
+                        type="date"
+                        min={todayStr}
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 bg-white"
+                        required
+                      />
+                      <span className="text-[11px] text-slate-400 block mt-1">
+                        Clinic open Monday through Saturday
+                      </span>
+                    </div>
+
+                    {/* Available Slot Picker */}
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                        Select Available 30-Minute Time Slot *
+                      </label>
+
+                      {slotsLoading && (
+                        <div className="py-6 text-center text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                          Loading available slots for {selectedDate}...
+                        </div>
+                      )}
+
+                      {!slotsLoading && slotsError && (
+                        <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl">
+                          {slotsError}
+                        </div>
+                      )}
+
+                      {!slotsLoading && !slotsError && availableSlots.length === 0 && (
+                        <div className="p-4 bg-slate-50 border border-slate-200 text-slate-600 text-xs rounded-xl text-center">
+                          No available slots for the selected date. Please pick another date.
+                        </div>
+                      )}
+
+                      {!slotsLoading && availableSlots.length > 0 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                          {availableSlots.map((slot) => {
+                            const isSelected = selectedSlot === slot.timeSlot;
+                            return (
+                              <button
+                                key={slot.timeSlot}
+                                type="button"
+                                disabled={!slot.isAvailable}
+                                onClick={() => setSelectedSlot(slot.timeSlot)}
+                                className={`py-2 px-3 rounded-xl text-xs font-medium transition-all text-center cursor-pointer ${
+                                  !slot.isAvailable
+                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed line-through'
+                                    : isSelected
+                                    ? 'bg-emerald-800 text-white shadow-xs font-semibold'
+                                    : 'bg-white border border-slate-200 text-slate-700 hover:border-emerald-700 hover:bg-emerald-50/50'
+                                }`}
+                              >
+                                {slot.timeSlot}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {selectedSlot && (
+                        <div className="mt-2 text-xs text-emerald-800 font-semibold flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Selected Slot: {selectedDate} at {selectedSlot} (PKT)</span>
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
                 </div>
 
-                {/* Slots Grid */}
-                <div className="md:col-span-2 space-y-2">
-                  <label className="block text-xs font-medium text-slate-700">
-                    Available 30-Minute Time Slots *
-                  </label>
+                {/* 2. Patient Details */}
+                <div className="space-y-4">
+                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2">
+                    2. Patient Information
+                  </h3>
 
-                  {slotsLoading ? (
-                    <div className="py-6 text-center text-xs text-slate-500">
-                      Checking Dr. Nazia's live schedule...
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    {/* Patient Name */}
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                        Patient Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={patientName}
+                        onChange={(e) => setPatientName(e.target.value)}
+                        placeholder="e.g. Fatima Zahra"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
+                        required
+                      />
                     </div>
-                  ) : slotsError ? (
-                    <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
-                      {slotsError}
+
+                    {/* Age */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                        Age (Years) *
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="120"
+                        value={age}
+                        onChange={(e) => setAge(e.target.value)}
+                        placeholder="e.g. 28"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
+                        required
+                      />
                     </div>
+
+                    {/* WhatsApp Number */}
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                        Mobile / WhatsApp Number (National or International) *
+                      </label>
+                      <input
+                        type="tel"
+                        value={whatsappNumber}
+                        onChange={(e) => setWhatsappNumber(e.target.value)}
+                        placeholder="e.g. 03112932192 (Pakistan) or +971... / +44... (International)"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
+                        required
+                      />
+                      <span className="text-[11px] text-slate-500 block mt-1">
+                        National patients enter regular mobile/WhatsApp (e.g. 03112932192). International patients please include country code with '+' (e.g. +97150..., +447..., +1...). Dr. Nazia will connect via this number.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Medical Concerns & Notes */}
+                <div className="space-y-4">
+                  <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2">
+                    3. Health Concern Description
+                  </h3>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                      Brief Description of Health Concern *
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={healthConcern}
+                      onChange={(e) => setHealthConcern(e.target.value)}
+                      placeholder="Describe your primary symptoms, duration, triggers, or what you would like to address during the consultation..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
+                      required
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                      Optional Additional Notes (Previous medications, allergies, etc.)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Any other details Dr. Nazia should be aware of prior to your session..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
+                    ></textarea>
+                  </div>
+                </div>
+
+                {/* Submit CTA */}
+                <button
+                  type="submit"
+                  disabled={formSubmitting || !selectedSlot}
+                  className={`w-full py-4 px-6 text-sm font-semibold text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    formSubmitting || !selectedSlot
+                      ? 'bg-slate-300 cursor-not-allowed text-slate-500'
+                      : 'bg-emerald-800 hover:bg-emerald-900 active:scale-98'
+                  }`}
+                >
+                  {formSubmitting ? (
+                    <span>Confirming Appointment Slot...</span>
                   ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {availableSlots.map((slot) => (
-                        <button
-                          key={slot.timeSlot}
-                          type="button"
-                          disabled={!slot.isAvailable}
-                          onClick={() => setSelectedSlot(slot.timeSlot)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-medium border text-center transition-all cursor-pointer ${
-                            !slot.isAvailable
-                              ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed line-through'
-                              : selectedSlot === slot.timeSlot
-                              ? 'bg-emerald-800 text-white border-emerald-900 shadow-xs font-semibold'
-                              : 'bg-white text-slate-700 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40'
-                          }`}
-                        >
-                          {slot.timeSlot}
-                          {!slot.isAvailable && <span className="block text-[10px] text-slate-400">Booked</span>}
-                        </button>
-                      ))}
-                    </div>
+                    <>
+                      <CheckCircle2 className="w-5 h-5 text-emerald-300" />
+                      <span>{language === 'ur' ? 'اپائنٹمنٹ بک کریں' : 'Confirm & Book Consultation'}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
                   )}
+                </button>
 
-                  {selectedSlot && (
-                    <p className="text-xs text-emerald-800 font-medium pt-1">
-                      Selected Slot: <strong>{selectedSlot}</strong> on {selectedDate}
-                    </p>
-                  )}
-                </div>
+              </form>
 
-              </div>
             </div>
-
-            {/* 2. Patient Details */}
-            <div className="space-y-4">
-              <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2">
-                2. Patient Information
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {/* Full Name */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Patient Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={patientName}
-                    onChange={(e) => setPatientName(e.target.value)}
-                    placeholder="e.g. Fatima Zahra"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
-                    required
-                  />
-                </div>
-
-                {/* Age */}
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Age (Years) *
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="120"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    placeholder="e.g. 28"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
-                    required
-                  />
-                </div>
-
-                {/* WhatsApp Number */}
-                <div className="md:col-span-3">
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Mobile / WhatsApp Number (National or International) *
-                  </label>
-                  <input
-                    type="tel"
-                    value={whatsappNumber}
-                    onChange={(e) => setWhatsappNumber(e.target.value)}
-                    placeholder="e.g. 03112932192 (Pakistan) or +971... / +44... (International)"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
-                    required
-                  />
-                  <span className="text-[11px] text-slate-500 block mt-1">
-                    National patients enter regular mobile/WhatsApp (e.g. 03112932192). International patients please include country code with '+' (e.g. +97150..., +447..., +1...). Dr. Nazia will connect via this number.
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Medical Concerns & Notes */}
-            <div className="space-y-4">
-              <h3 className="text-base font-serif font-bold text-slate-900 border-b pb-2">
-                3. Health Concern Description
-              </h3>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Brief Description of Health Concern *
-                </label>
-                <textarea
-                  rows={3}
-                  value={healthConcern}
-                  onChange={(e) => setHealthConcern(e.target.value)}
-                  placeholder="Describe your primary symptoms, duration, triggers, or what you would like to address during the consultation..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
-                  required
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Optional Additional Notes (Previous medications, allergies, etc.)
-                </label>
-                <textarea
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Any other details Dr. Nazia should be aware of prior to your session..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
-                ></textarea>
-              </div>
-            </div>
-
-            {/* 4. Payment & Policy Summary */}
-            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Online Consultation Fee:</span>
-                <span className="font-bold text-emerald-900 text-base">PKR 500</span>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                By submitting this form, you will be taken to the <strong>ABHI Pay</strong> checkout to settle the PKR 500 consultation fee. Appointments are held in <em>Awaiting Payment</em> status and confirmed automatically upon backend verification.
-              </p>
-            </div>
-
-            {/* Submit CTA */}
-            <button
-              type="submit"
-              disabled={formSubmitting || !selectedSlot}
-              className={`w-full py-4 px-6 text-sm font-semibold text-white rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                formSubmitting || !selectedSlot
-                  ? 'bg-slate-300 cursor-not-allowed text-slate-500'
-                  : 'bg-emerald-800 hover:bg-emerald-900 active:scale-98'
-              }`}
-            >
-              {formSubmitting ? (
-                <span>Reserving Time Slot...</span>
-              ) : (
-                <>
-                  <span>Continue to ABHI Pay (PKR 500)</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-
-          </form>
-
-        </div>
+          )}
+        </>
       )}
 
       {/* TAB 2: TRACK EXISTING BOOKING */}
@@ -453,10 +590,10 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-10 space-y-8">
           <div className="max-w-xl mx-auto space-y-4 text-center">
             <h3 className="text-xl font-serif font-bold text-slate-900">
-              Look Up Your Appointment
+              {language === 'ur' ? 'اپنی اپائنٹمنٹ چیک کریں' : 'Look Up Your Appointment'}
             </h3>
             <p className="text-xs text-slate-600">
-              Enter the unique appointment reference you received when booking (e.g., <code>APT-2026-1042</code>) to check payment status, view doctor notes, or print receipt.
+              Enter the unique appointment reference you received when booking (e.g., <code>APT-2026-1042</code>) to check your slot status, view doctor notes, or print your booking pass.
             </p>
 
             <form onSubmit={handleTrackSubmit} className="flex gap-2 pt-2">
@@ -493,15 +630,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                   <span className="text-lg font-mono font-bold text-slate-900">{trackedAppointment.reference}</span>
                 </div>
                 <div>
-                  <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${
-                    trackedAppointment.status === 'Confirmed'
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                      : trackedAppointment.status === 'Awaiting Payment'
-                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                      : trackedAppointment.status === 'Payment Pending'
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                      : 'bg-rose-100 text-rose-800 border border-rose-200'
-                  }`}>
+                  <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                     {trackedAppointment.status}
                   </span>
                 </div>
@@ -516,47 +645,28 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                   <span className="text-slate-400 block">WhatsApp Number</span>
                   <span className="font-semibold text-slate-900 text-sm">{trackedAppointment.whatsappNumber}</span>
                 </div>
-                <div>
-                  <span className="text-slate-400 block">Date & Time Slot</span>
-                  <span className="font-semibold text-slate-900 text-sm">{trackedAppointment.date} at {trackedAppointment.timeSlot}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block">Consultation Fee</span>
-                  <span className="font-semibold text-emerald-800 text-sm">PKR 500</span>
+                <div className="col-span-2">
+                  <span className="text-slate-400 block">Scheduled Consultation Date & Slot</span>
+                  <span className="font-bold text-emerald-900 text-sm">{trackedAppointment.date} at {trackedAppointment.timeSlot} (PKT)</span>
                 </div>
               </div>
 
               {trackedAppointment.doctorNotes && (
-                <div className="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700">
+                <div className="bg-white p-3.5 rounded-xl border border-slate-200 text-xs text-slate-700">
                   <strong className="text-slate-900 block mb-0.5">Doctor Notes / Instructions:</strong>
                   <p>{trackedAppointment.doctorNotes}</p>
                 </div>
               )}
 
-              {/* Action buttons based on status */}
+              {/* Action buttons */}
               <div className="pt-2 flex flex-wrap gap-2">
-                {trackedAppointment.status !== 'Confirmed' && (
-                  <button
-                    onClick={() => {
-                      setActiveCheckoutApt(trackedAppointment);
-                      setShowPaymentModal(true);
-                    }}
-                    className="flex-1 py-2.5 px-4 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    <span>Pay Consultation Fee via ABHI Pay</span>
-                  </button>
-                )}
-
-                {trackedAppointment.status === 'Confirmed' && (
-                  <button
-                    onClick={() => window.print()}
-                    className="py-2.5 px-4 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold rounded-xl flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Printer className="w-4 h-4" />
-                    <span>Print Booking Pass</span>
-                  </button>
-                )}
+                <button
+                  onClick={() => window.print()}
+                  className="py-2.5 px-4 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <Printer className="w-4 h-4 text-slate-500" />
+                  <span>Print Booking Pass</span>
+                </button>
 
                 <a
                   href={`https://wa.me/923112932192?text=${encodeURIComponent(
@@ -564,28 +674,16 @@ export const BookingPage: React.FC<BookingPageProps> = ({ language }) => {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-2.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5"
+                  className="flex-1 py-2.5 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 shadow-xs"
                 >
-                  <span>Chat on WhatsApp</span>
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  <span>Chat on WhatsApp (03112932192)</span>
                 </a>
               </div>
 
             </div>
           )}
         </div>
-      )}
-
-      {/* ABHI Pay Modal Triggered on Submit or Payment Click */}
-      {showPaymentModal && activeCheckoutApt && (
-        <AbhiPayModal
-          appointment={activeCheckoutApt}
-          onClose={() => setShowPaymentModal(false)}
-          onPaymentSuccess={(confirmed) => {
-            setBookedAppointment(confirmed);
-            setTrackedAppointment(confirmed);
-          }}
-          language={language}
-        />
       )}
 
     </div>

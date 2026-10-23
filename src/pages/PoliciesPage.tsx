@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { ShieldCheck, FileText, RefreshCw, AlertTriangle, Scale } from 'lucide-react';
+import { ShieldCheck, Scale, Globe } from 'lucide-react';
 import { BotanicalBranch, GoldStripeDivider } from '../components/BotanicalAccents';
 import { Language } from '../types/clinic';
 import { translations } from '../utils/translations';
 
 interface PoliciesPageProps {
-  initialSection?: 'privacy' | 'terms' | 'refund' | 'global';
+  initialSection?: 'privacy' | 'terms' | 'global';
   language: Language;
 }
 
@@ -13,7 +13,7 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
   initialSection = 'privacy',
   language,
 }) => {
-  const [activePolicy, setActivePolicy] = useState<'privacy' | 'terms' | 'refund' | 'global'>(initialSection);
+  const [activePolicy, setActivePolicy] = useState<'privacy' | 'terms' | 'global'>(initialSection);
   const t = translations[language];
 
   return (
@@ -56,16 +56,6 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
             Terms & Conditions
           </button>
           <button
-            onClick={() => setActivePolicy('refund')}
-            className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
-              activePolicy === 'refund'
-                ? 'bg-emerald-800 text-white border-emerald-900 shadow-xs'
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            Cancellation & Refund Policy
-          </button>
-          <button
             onClick={() => setActivePolicy('global')}
             className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
               activePolicy === 'global'
@@ -95,7 +85,7 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
 
             <h3 className="font-semibold text-slate-900 text-base">1. Information We Collect</h3>
             <p>
-              We collect your name, WhatsApp/mobile number, age, symptoms description, and appointment scheduling details. This information is utilized strictly to conduct your online clinical consultation, verify appointment fee settlement, and maintain case history.
+              We collect your name, WhatsApp/mobile number, age, symptoms description, and appointment scheduling details. This information is utilized strictly to conduct your online clinical consultation, organize appointment logistics, and maintain your personalized homeopathic case history.
             </p>
 
             <h3 className="font-semibold text-slate-900 text-base">2. Medical Confidentiality</h3>
@@ -103,9 +93,9 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
               All health descriptions, symptoms, laboratory findings, and diagnostic notes shared during your WhatsApp or video consultation are treated under doctor-patient confidentiality. Your records will never be sold, disclosed, or shared with third-party advertisers.
             </p>
 
-            <h3 className="font-semibold text-slate-900 text-base">3. Payment Security</h3>
+            <h3 className="font-semibold text-slate-900 text-base">3. Digital Communication Security</h3>
             <p>
-              Online payments are processed through <strong>ABHI Pay</strong>. We do not store your credit card numbers, banking PINs, or wallet passwords on our servers. All financial transactions are secured through 256-bit encryption via the payment gateway.
+              We maintain strict safeguards to protect patient privacy and personal records. Consultations take place directly over private WhatsApp audio or video sessions between Dr. Nazia Tabassum and the patient.
             </p>
           </div>
         )}
@@ -119,7 +109,7 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
             </div>
 
             <p>
-              By accessing this website, scheduling an appointment, or paying the consultation fee, you agree to these Terms and Conditions.
+              By accessing this website or scheduling an appointment, you agree to these Terms and Conditions.
             </p>
 
             <h3 className="font-semibold text-slate-900 text-base">1. Scope of Online Practice</h3>
@@ -127,54 +117,23 @@ export const PoliciesPage: React.FC<PoliciesPageProps> = ({
               Dr. Nazia Tabassum (D.H.M.S, R.H.M.P) provides professional homeopathic evaluations exclusively via online channels (WhatsApp video/audio calls). Online consultations do not encompass physical palpation, emergency triage, or hospital admissions.
             </p>
 
-            <h3 className="font-semibold text-slate-900 text-base">2. Consultation Tariff & Confirmation</h3>
+            <h3 className="font-semibold text-slate-900 text-base">2. Appointment Booking & Confirmation</h3>
             <p>
-              The standard consultation fee is <strong>PKR 500</strong> per scheduled appointment. An appointment is only held in confirmed status once backend verification confirms successful receipt of the payment reference from ABHI Pay.
+              Appointments are scheduled online for available 30-minute consultation slots. Once submitted, your appointment is confirmed with a dedicated reference number and logged directly into our clinical calendar.
             </p>
 
             <h3 className="font-semibold text-slate-900 text-base">3. Punctuality and Availability</h3>
             <p>
-              Patients are requested to be online and available on WhatsApp at their reserved time slot between 4:00 PM and 9:00 PM PKT. Delays exceeding 15 minutes without prior notice may require rescheduling.
+              Patients are requested to be online and available on WhatsApp at their reserved time slot between 4:00 PM and 9:00 PM PKT. If you need to adjust your time, please notify us in advance via WhatsApp.
             </p>
           </div>
         )}
 
-        {/* 3. REFUND & CANCELLATION */}
-        {activePolicy === 'refund' && (
-          <div className="space-y-5 animate-in fade-in">
-            <div className="flex items-center gap-3 text-emerald-900 pb-3 border-b border-slate-100">
-              <RefreshCw className="w-6 h-6 text-emerald-700" />
-              <h2 className="text-xl font-serif font-bold">Cancellation & Rescheduling Policy</h2>
-            </div>
-
-            <p>
-              We understand that unforeseen circumstances may necessitate changes to your schedule. Our cancellation and refund guidelines are structured to be fair and transparent:
-            </p>
-
-            <h3 className="font-semibold text-slate-900 text-base">1. Rescheduling Your Appointment</h3>
-            <p>
-              You may reschedule your consultation without penalty up to <strong>2 hours prior</strong> to your scheduled appointment time. You can coordinate rescheduling through our website or by messaging WhatsApp (03112932192).
-            </p>
-
-            <h3 className="font-semibold text-slate-900 text-base">2. Refund Eligibility</h3>
-            <p>
-              - If you cancel your booking at least 4 hours before the scheduled time, a full refund of PKR 500 will be initiated back to your original payment source via ABHI Pay.<br />
-              - In the rare event that the doctor must cancel a scheduled slot due to unforeseen emergency, the patient will be offered an immediate priority reschedule or an immediate 100% refund.<br />
-              - Once a consultation has taken place, the professional consultation fee is non-refundable.
-            </p>
-
-            <h3 className="font-semibold text-slate-900 text-base">3. Refund Processing Timelines</h3>
-            <p>
-              Approved refunds are routed through ABHI Pay back to your issuing bank or digital wallet within 3 to 5 business days, subject to standard Pakistani interbank clearing cycles.
-            </p>
-          </div>
-        )}
-
-        {/* 4. NATIONAL & INTERNATIONAL PRACTICE GUIDELINES */}
+        {/* 3. NATIONAL & INTERNATIONAL PRACTICE GUIDELINES */}
         {activePolicy === 'global' && (
           <div className="space-y-5 animate-in fade-in">
             <div className="flex items-center gap-3 text-emerald-900 pb-3 border-b border-slate-100">
-              <ShieldCheck className="w-6 h-6 text-emerald-700" />
+              <Globe className="w-6 h-6 text-emerald-700" />
               <h2 className="text-xl font-serif font-bold">National & International Online Consultation Guidelines</h2>
             </div>
 

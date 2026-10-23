@@ -643,8 +643,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </a>
                 </div>
                 <div>
-                  <span className="text-slate-400 block">Consultation Fee</span>
-                  <span className="font-bold text-emerald-950 text-sm">PKR 500</span>
+                  <span className="text-slate-400 block">Consultation Format</span>
+                  <span className="font-bold text-emerald-950 text-sm">Online (WhatsApp)</span>
                 </div>
               </div>
 

@@ -26,7 +26,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'about', label: t.navAbout },
     { id: 'consultation', label: t.navConsultation },
     { id: 'book', label: t.navBook },
-    { id: 'payment', label: t.navPayment },
     { id: 'faqs', label: t.navFaqs },
     { id: 'contact', label: t.navContact },
   ];
@@ -99,7 +98,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNavClick('book')}
               className="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-emerald-800 hover:bg-emerald-900 active:scale-98 rounded-lg shadow-xs transition-all whitespace-nowrap shrink-0 cursor-pointer"
             >
-              {language === 'ur' ? 'بکنگ (500 روپے)' : 'Book (PKR 500)'}
+              {language === 'ur' ? 'اپائنٹمنٹ بک کریں' : 'Book Appointment'}
             </button>
 
             {/* Doctor Admin Portal Shortcut */}

@@ -47,7 +47,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ language }) => {
           Contact Dr. Nazia Tabassum
         </h1>
         <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
-          We are here to assist you with appointment bookings, consultation inquiries, and payment verification.
+          We are here to assist you with appointment bookings, consultation inquiries, and session coordination.
         </p>
         <GoldStripeDivider />
       </div>

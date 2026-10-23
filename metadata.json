@@ -1,6 +1,6 @@
 {
   "name": "Dr. Nazia Tabassum – Homeopathic Clinic",
-  "description": "Personalized online homeopathic consultations with Dr. Nazia Tabassum (D.H.M.S, R.H.M.P) in Karachi, Pakistan. Seamless appointment booking, secure ABHI Pay integration, and WhatsApp support.",
+  "description": "Personalized online homeopathic consultations with Dr. Nazia Tabassum (D.H.M.S, R.H.M.P) in Karachi, Pakistan. Seamless online appointment booking and WhatsApp support.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

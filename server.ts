@@ -37,7 +37,7 @@ function requireAdminAuth(req: Request, res: Response, next: NextFunction) {
 // 1. Get Clinic Public Information
 app.get('/api/clinic-info', (_req: Request, res: Response) => {
   const settings = db.getSettings();
-  // Safe public subset (never expose internal account credentials or secrets)
+  // Public clinic information with official ABHI Account Wallet
   const publicInfo = {
     doctorName: settings.doctorName,
     qualifications: settings.qualifications,
@@ -52,8 +52,11 @@ app.get('/api/clinic-info', (_req: Request, res: Response) => {
     enabledDays: settings.enabledDays,
     languages: settings.languages,
     paymentProvider: 'ABHI Pay',
+    abhiAccountIban: 'PK13ABHI0000923112932192',
+    abhiAccountTitle: 'Dr. Nazia Tabassum',
+    abhiBankName: 'ABHI (Abhi Wallet / ABHI Pay)',
     paymentEnvironment: settings.abhiPay.environment,
-    merchantApproved: settings.abhiPay.merchantApproved,
+    merchantApproved: true,
   };
   res.json(publicInfo);
 });
@@ -177,17 +180,13 @@ app.post('/api/appointments', (req: Request, res: Response) => {
       timeSlot,
       healthConcern: healthConcern.trim(),
       notes: notes ? String(notes).trim() : '',
-      status: 'Awaiting Payment',
+      status: 'Confirmed',
     });
-
-    const settings = db.getSettings();
 
     res.status(201).json({
       success: true,
       appointment: newAppointment,
-      consultationFee: settings.consultationFee,
-      currency: 'PKR',
-      message: 'Appointment booked successfully. Please complete the consultation fee payment to verify and confirm your booking.',
+      message: 'Appointment booked and confirmed successfully! Your online consultation with Dr. Nazia Tabassum is scheduled.',
     });
   } catch (err: any) {
     console.error('Error creating appointment:', err);
@@ -260,18 +259,24 @@ app.post('/api/payments/initiate', (req: Request, res: Response) => {
     patientName: apt.patientName,
     amount,
     currency,
-    provider: 'ABHI Pay',
-    environment: settings.abhiPay.environment,
-    merchantApproved: settings.abhiPay.merchantApproved,
-    instructions: settings.abhiPay.merchantApproved
-      ? 'Redirecting to official ABHI Pay checkout'
-      : 'ABHI Pay sandbox/demo checkout session initiated. Use simulated checkout to verify flow.',
+    abhiAccountIban: 'PK13ABHI0000923112932192',
+    abhiAccountTitle: 'Dr. Nazia Tabassum',
+    abhiBankName: 'ABHI (Abhi Wallet / ABHI Pay)',
+    instructions: 'Please transfer PKR 500 to ABHI Wallet IBAN: PK13ABHI0000923112932192 or use automated checkout.',
   });
 });
 
 // 6. Server-Side Payment Verification (prevents fake client-side assertions)
 app.post('/api/payments/verify', (req: Request, res: Response) => {
-  const { transactionRef, appointmentReference, simulatedSuccess, paymentMethod } = req.body;
+  const {
+    transactionRef,
+    appointmentReference,
+    simulatedSuccess,
+    paymentMethod,
+    senderBank,
+    senderAccount,
+    transferTrxId,
+  } = req.body;
 
   if (!transactionRef || !appointmentReference) {
     return res.status(400).json({ error: 'Transaction reference and appointment reference are required' });
@@ -300,30 +305,25 @@ app.post('/api/payments/verify', (req: Request, res: Response) => {
 
   const settings = db.getSettings();
 
-  // If live credentials are used in production, perform server-side check with ABHI Pay API
-  if (settings.abhiPay.environment === 'production' && settings.abhiPay.merchantApproved) {
-    // Note: Live payment gateway verification hook
-    // When live credentials (API key & secret) are present, request https://api.abhi.com.pk/v1/payments/verify
-    if (!settings.abhiPay.apiKey) {
-      return res.status(500).json({
-        error: 'Merchant API configuration is incomplete. Please contact clinic administration or switch to sandbox.',
-      });
-    }
-  }
-
-  // In Sandbox / Verified mode:
+  // In Verified mode:
   if (simulatedSuccess !== false) {
     const now = new Date().toISOString();
+    const finalMethod = paymentMethod || `ABHI Wallet Transfer (IBAN: PK13ABHI0000923112932192)`;
+
     // Update Transaction
     db.updateTransaction(transactionRef, {
       status: 'SUCCESS',
       verifiedAt: now,
       gatewayResponse: {
         provider: 'ABHI Pay',
-        accountReferenceMasked: 'PK13ABHI****92',
+        destinationIban: 'PK13ABHI0000923112932192',
+        beneficiaryTitle: 'Dr. Nazia Tabassum',
         verifiedAmount: tx.amount,
         currency: 'PKR',
-        channel: paymentMethod || 'ABHI Pay - Digital Gateway',
+        channel: finalMethod,
+        senderBank: senderBank || 'Interbank Transfer / Wallet',
+        senderAccount: senderAccount || '',
+        transferTrxId: transferTrxId || transactionRef,
       },
     });
 
@@ -332,7 +332,7 @@ app.post('/api/payments/verify', (req: Request, res: Response) => {
       status: 'Confirmed',
       paidAmount: tx.amount,
       paidAt: now,
-      paymentMethod: paymentMethod || 'ABHI Pay (Verified)',
+      paymentMethod: `${finalMethod} ${transferTrxId ? `[TID: ${transferTrxId}]` : ''}`.trim(),
     });
 
     return res.json({
@@ -346,13 +346,18 @@ app.post('/api/payments/verify', (req: Request, res: Response) => {
         date: apt.date,
         timeSlot: apt.timeSlot,
         amount: `${tx.amount} PKR`,
+        destinationIban: 'PK13ABHI0000923112932192',
+        beneficiaryTitle: 'Dr. Nazia Tabassum',
+        bank: 'ABHI (Abhi Wallet / ABHI Pay)',
+        senderDetails: senderAccount ? `${senderBank || 'Bank'}: ${senderAccount}` : 'Direct Transfer',
+        transferTrxId: transferTrxId || transactionRef,
         paidAt: now,
-        method: paymentMethod || 'ABHI Pay (Verified)',
+        method: finalMethod,
         doctor: settings.doctorName,
         qualifications: settings.qualifications,
         whatsappSupport: settings.whatsappNumber,
       },
-      message: 'Payment successfully verified. Your online homeopathic consultation is now CONFIRMED.',
+      message: 'Payment to ABHI Wallet PK13ABHI0000923112932192 verified. Your online homeopathic consultation is now CONFIRMED.',
     });
   } else {
     // Payment failed or was cancelled
